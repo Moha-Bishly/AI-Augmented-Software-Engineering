@@ -22,11 +22,15 @@ def load_chunks() -> list[str]:
 
 # TODO: return the subset of chunks relevant to `question` (simple keyword overlap is fine).
 def YOUR_RETRIEVER(question: str, chunks: list[str]) -> list[str]:
-    return []
-
+    keywords = question.lower().replace("?", "").split()
+    return [chunk for chunk in chunks if any(word in chunk.lower() for word in keywords if len(word) > 3)]
 
 # TODO: Fill this in! Force the model to answer only from the provided context.
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+You are a support assistant. Answer the user's question using ONLY the facts provided in the Context.
+If the Context does not contain the answer, you must reply exactly with: "I don't know."
+Do not guess or include outside information.
+"""
 
 CASES = [
     ("How long do I have to return an item?", ["30 days"]),

@@ -26,11 +26,11 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_order_status",
-            "description": "",  # TODO
+            "description": "Look up the current shipping status of a customer's order.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "order_id": {"type": "string", "description": ""},  # TODO
+                    "order_id": {"type": "string", "description": "The order ID number provided by the customer."},  
                 },
                 "required": ["order_id"],
             },
@@ -38,8 +38,10 @@ TOOLS = [
     }
 ]
 
-# TODO: Fill this in! Tell the model to look up the order before answering.
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+You are a helpful customer support agent. 
+If a customer asks about the status of their order, you must ALWAYS call the get_order_status tool to look up the status using their order ID.
+"""
 
 
 def run() -> bool:

@@ -12,8 +12,17 @@ from ollama import chat
 MODEL = "llama3.1:8b"
 NUM_RUNS = 5
 
-# TODO: Fill this in! Include a few labeled examples (k-shot) in the system prompt.
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+Classify the customer message into one of these categories: billing, shipping, returns, technical, other.
+Output ONLY the exact category name in lowercase. Do not add any other words.
+
+Examples:
+Message: "My screen is broken."
+technical
+
+Message: "Can I get a different size?"
+returns
+"""
 
 CASES = [
     ("My card was charged twice for order 4412.", "billing"),
