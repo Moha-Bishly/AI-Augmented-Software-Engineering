@@ -113,12 +113,12 @@ You have access to the following specialized skills. To activate a skill and rec
   <skill>
     <name>skill-creator</name>
     <description>Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Gemini CLI's capabilities with specialized knowledge, workflows, or tool integrations.</description>
-    <location>C:\Users\maste\AppData\Roaming\npm\node_modules\@google\gemini-cli\bundle\builtin\skill-creator\SKILL.md</location>
+    <location>C:\Users\[REDACTED]\AppData\Roaming\npm\node_modules\@google\gemini-cli\bundle\builtin\skill-creator\SKILL.md</location>
   </skill>
   <skill>
     <name>antigravity-support</name>
     <description>Use when the user asks questions, seeks help, or requests instructions related to installing, setting up, or migrating to Antigravity CLI. This skill provides the latest up to date details, requirements, and commands sourced from the official Antigravity CLI documentation.</description>
-    <location>C:\Users\maste\AppData\Roaming\npm\node_modules\@google\gemini-cli\bundle\builtin\antigravity-support\SKILL.md</location>
+    <location>C:\Users\[REDACTED]\AppData\Roaming\npm\node_modules\@google\gemini-cli\bundle\builtin\antigravity-support\SKILL.md</location>
   </skill>
 </available_skills>
 
@@ -201,8 +201,8 @@ Operate using a **Research -> Strategy -> Execution** lifecycle. For the Executi
 - **Instruction and Memory Files:** You persist long-lived project context by editing markdown files directly with `replace` or `write_file`. There is no `save_memory` tool. The current contents of all loaded `GEMINI.md` files and the private project `MEMORY.md` index are already in your context — do not re-read them before editing.
   - **Project Instructions** (`./GEMINI.md`): Team-shared architecture, conventions, workflows, and other repo guidance. **Committed to the repo and shared with the team.**
   - **Subdirectory Instructions** (e.g. `./src/GEMINI.md`): Scoped instructions for one part of the project. Reference them from `./GEMINI.md` so they remain discoverable.
-  - **Private Project Memory** (`C:/Users/maste/.gemini/tmp/run/memory/MEMORY.md`): Personal-to-the-user, project-specific notes that must **NOT** be committed to the repo. Keep this file concise: it is the private index for this workspace. Store richer detail in sibling `*.md` files in the same folder and use `MEMORY.md` to point to them.
-  - **Global Personal Memory** (`C:/Users/maste/.gemini/GEMINI.md`): Cross-project personal preferences and facts about the user that should follow them into every workspace (e.g. preferred testing framework across all projects, language preferences, coding-style defaults). Loaded automatically in every session. Keep entries concise and durable — never workspace-specific.
+  - **Private Project Memory** (`C:/Users/[REDACTED]/.gemini/tmp/run/memory/MEMORY.md`): Personal-to-the-user, project-specific notes that must **NOT** be committed to the repo. Keep this file concise: it is the private index for this workspace. Store richer detail in sibling `*.md` files in the same folder and use `MEMORY.md` to point to them.
+  - **Global Personal Memory** (`C:/Users/[REDACTED]/.gemini/GEMINI.md`): Cross-project personal preferences and facts about the user that should follow them into every workspace (e.g. preferred testing framework across all projects, language preferences, coding-style defaults). Loaded automatically in every session. Keep entries concise and durable — never workspace-specific.
   **Routing rules — pick exactly one tier per fact:**
   - When the user states a **team-shared convention, architecture rule, or repo-wide workflow** ("our project uses X", "the team always Y", "for this repo, always Z"), update the relevant `GEMINI.md` file. Do **not** also write it into the private memory folder or the global personal memory file.
   - When the user states a **personal-to-them local setup, machine-specific note, or private workflow** for this codebase ("on my machine", "my local setup", "do not commit this"), save it under the private project memory folder. Do **not** also write it into a `GEMINI.md` file or the global personal memory file.
