@@ -4,3 +4,4 @@ httpx
 pytest
 black
 ruff
+pydantic>=2,<3

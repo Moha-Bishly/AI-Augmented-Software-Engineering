@@ -10,12 +10,14 @@ Test:
     pytest
 """
 
+import re
 import sqlite3
 from contextlib import closing
+from datetime import date, timedelta
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 DB_PATH = Path(__file__).parent / "habits.db"
 
@@ -47,11 +49,36 @@ init_db()
 
 
 class HabitIn(BaseModel):
-    name: str
+    """Input payload for habit creation."""
+
+    name: str = Field(..., min_length=1, description="Habit name cannot be empty")
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        """Reject empty or whitespace-only habit names."""
+        trimmed = v.strip()
+        if not trimmed:
+            raise ValueError("habit name cannot be empty or whitespace only")
+        return trimmed
 
 
 class CheckinIn(BaseModel):
+    """Input payload for habit check-in."""
+
     day: str  # ISO date, e.g. "2026-09-22"
+
+    @field_validator("day")
+    @classmethod
+    def validate_day(cls, v: str) -> str:
+        """Validate exact YYYY-MM-DD ISO calendar date."""
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", v):
+            raise ValueError("invalid day format; expected YYYY-MM-DD")
+        try:
+            parsed = date.fromisoformat(v)
+        except (ValueError, TypeError):
+            raise ValueError("invalid calendar date")
+        return parsed.isoformat()
 
 
 @app.post("/habits")
@@ -92,3 +119,46 @@ def list_checkins(habit_id: int):
             "SELECT day FROM checkins WHERE habit_id = ? ORDER BY day", (habit_id,)
         ).fetchall()
     return [r["day"] for r in rows]
+
+
+@app.get("/habits/{habit_id}/streak")
+def get_streak(habit_id: int, today: str | None = None):
+    """Calculate the consecutive day check-in streak up to and including today."""
+    with closing(get_db()) as conn:
+        habit = conn.execute(
+            "SELECT id FROM habits WHERE id = ?", (habit_id,)
+        ).fetchone()
+        if habit is None:
+            raise HTTPException(status_code=404, detail="unknown habit")
+        rows = conn.execute(
+            "SELECT DISTINCT day FROM checkins WHERE habit_id = ?", (habit_id,)
+        ).fetchall()
+
+    checkin_dates = {r["day"] for r in rows}
+
+    if today is not None:
+        try:
+            current_date = date.fromisoformat(today)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail="invalid today date format, expected YYYY-MM-DD",
+            )
+    else:
+        current_date = date.today()
+
+    streak = 0
+    target_date = current_date
+    if target_date.isoformat() in checkin_dates:
+        while target_date.isoformat() in checkin_dates:
+            streak += 1
+            target_date -= timedelta(days=1)
+    elif (target_date - timedelta(days=1)).isoformat() in checkin_dates:
+        target_date -= timedelta(days=1)
+        while target_date.isoformat() in checkin_dates:
+            streak += 1
+            target_date -= timedelta(days=1)
+    else:
+        streak = 0
+
+    return {"habit_id": habit_id, "streak": streak}
