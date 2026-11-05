@@ -10,6 +10,11 @@ pytest                      # 3 tests should pass
 uvicorn main:app --reload   # http://localhost:8000  (docs at /docs)
 ```
 
+## Guardrails (Lint, Format, Test)
+- **Formatting**: `black --check .` (reformat files with `black .`)
+- **Linting**: `ruff check .` (auto-fix issues with `ruff check --fix .`)
+- **Testing**: `pytest` (executes unit tests and fails build if any test fails)
+
 ## Endpoints
 - `POST /habits` `{ "name": ... }`
 - `GET /habits`
